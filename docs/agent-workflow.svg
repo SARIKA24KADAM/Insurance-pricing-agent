@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="310" viewBox="0 0 1200 310" role="img" aria-labelledby="title desc">
+  <title id="title">PolicyLens data workflow</title>
+  <desc id="desc">A flow diagram from synthetic or uploaded policy data through field mapping, quality review and insurance metrics, segment analysis, and optional modeling to results.</desc>
+  <defs>
+    <style>
+      .bg{fill:#f6f8fc}.card{fill:#fff;stroke:#d8e1ee;stroke-width:2}.accent{fill:#2457c5}.title{font:700 18px Arial,sans-serif;fill:#15233b}.copy{font:14px Arial,sans-serif;fill:#53627a}.arrow{stroke:#8294b1;stroke-width:3;fill:none;marker-end:url(#head)}
+    </style>
+    <marker id="head" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 Z" fill="#8294b1"/></marker>
+  </defs>
+  <rect class="bg" width="1200" height="310" rx="20"/>
+  <g transform="translate(25 82)"><rect class="card" width="175" height="145" rx="15"/><circle class="accent" cx="30" cy="31" r="17"/><text x="30" y="37" text-anchor="middle" font="bold 16px Arial" fill="white">1</text><text class="title" x="22" y="73">Choose data</text><text class="copy" x="22" y="101">Synthetic portfolio</text><text class="copy" x="22" y="122">or uploaded CSV</text></g>
+  <path class="arrow" d="M205 155 H235"/>
+  <g transform="translate(245 82)"><rect class="card" width="175" height="145" rx="15"/><circle class="accent" cx="30" cy="31" r="17"/><text x="30" y="37" text-anchor="middle" font="bold 16px Arial" fill="white">2</text><text class="title" x="22" y="73">Map fields</text><text class="copy" x="22" y="101">Exposure, premium,</text><text class="copy" x="22" y="122">claims and losses</text></g>
+  <path class="arrow" d="M425 155 H455"/>
+  <g transform="translate(465 82)"><rect class="card" width="175" height="145" rx="15"/><circle class="accent" cx="30" cy="31" r="17"/><text x="30" y="37" text-anchor="middle" font="bold 16px Arial" fill="white">3</text><text class="title" x="22" y="73">Review portfolio</text><text class="copy" x="22" y="101">Quality checks and</text><text class="copy" x="22" y="122">pricing measures</text></g>
+  <path class="arrow" d="M645 155 H675"/>
+  <g transform="translate(685 82)"><rect class="card" width="175" height="145" rx="15"/><circle class="accent" cx="30" cy="31" r="17"/><text x="30" y="37" text-anchor="middle" font="bold 16px Arial" fill="white">4</text><text class="title" x="22" y="73">Compare segments</text><text class="copy" x="22" y="101">Review experience</text><text class="copy" x="22" y="122">by rating factor</text></g>
+  <path class="arrow" d="M865 155 H895"/>
+  <g transform="translate(905 82)"><rect class="card" width="175" height="145" rx="15"/><circle class="accent" cx="30" cy="31" r="17"/><text x="30" y="37" text-anchor="middle" font="bold 16px Arial" fill="white">5</text><text class="title" x="22" y="73">Optional model</text><text class="copy" x="22" y="101">Fit and evaluate</text><text class="copy" x="22" y="122">Tweedie baseline</text></g>
+  <path class="arrow" d="M1085 155 H1110"/>
+  <text class="title" x="1120" y="149">Results</text><text class="copy" x="1120" y="171">in Streamlit</text>
+</svg>
+
