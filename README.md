@@ -2,6 +2,8 @@
 
 A local Streamlit app for exploring insurance policy data. It checks data quality, calculates portfolio pricing metrics, compares rating-factor segments, and can fit a baseline pure-premium model.
 
+For a detailed explanation of the design and how the agent was created, see [BUILD_NOTES.md](BUILD_NOTES.md).
+
 ## Run on Windows
 
 Open PowerShell and run:
