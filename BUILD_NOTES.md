@@ -6,6 +6,10 @@ PolicyLens is a small, local-first insurance pricing analysis agent. It helps a 
 
 The first version was designed around a clear workflow: load a dataset, map its insurance fields, review portfolio metrics, inspect segments, and optionally fit a baseline model. It is an exploratory analysis tool, not an automated pricing decision system.
 
+![PolicyLens workflow from data selection through analysis and optional modeling](docs/agent-workflow.svg)
+
+*Figure 1. The end-to-end analysis workflow in the Streamlit app.*
+
 ## 2. What “agent” means in this version
 
 This version combines an analysis workflow with a statistical machine-learning model:
@@ -81,6 +85,10 @@ The generated review identifies the highest and lowest segment for the most rele
 ## 6. Baseline pure-premium model
 
 The optional model estimates incurred losses per unit of exposure from selected rating factors.
+
+![Baseline pure-premium modeling pipeline](docs/model-pipeline.svg)
+
+*Figure 2. The baseline model pipeline and its holdout comparison.*
 
 1. Rows need positive exposure and non-negative incurred losses. At least 40 valid rows are required.
 2. The target is incurred losses divided by exposure.
