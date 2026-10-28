@@ -1,122 +1,81 @@
 # How PolicyLens Was Built
 
-## 1. Purpose
+## Purpose and scope
 
-PolicyLens is a small, local-first insurance pricing analysis agent. It helps a data scientist explore policy-level experience, catch common data problems, compare rating-factor segments, and evaluate a simple pure-premium model.
+PolicyLens is a local-first insurance pricing analysis prototype. It lets a data scientist load policy-level experience, map core fields, review data quality, compare one rating factor at a time, and optionally evaluate a baseline pure-premium model.
 
-The first version was designed around a clear workflow: load a dataset, map its insurance fields, review portfolio metrics, inspect segments, and optionally fit a baseline model. It is an exploratory analysis tool, not an automated pricing decision system.
+The app is an interactive analysis workflow with deterministic findings and a statistical model. It does not use an LLM, call an external AI API, or autonomously set prices.
 
 ![PolicyLens workflow from data selection through analysis and optional modeling](docs/agent-workflow.svg)
 
-*Figure 1. The end-to-end analysis workflow in the Streamlit app.*
+*Figure 1. The implemented Streamlit workflow.*
 
-## 2. What “agent” means in this version
+## Architecture and tools
 
-This version combines an analysis workflow with a statistical machine-learning model:
+- `app.py` provides Streamlit UI, synthetic portfolio generation, CSV upload, field mapping, portfolio calculations, segment summaries, and result display.
+- `modeling.py` builds the scikit-learn preprocessing pipeline, fits Tweedie regression, and evaluates holdout errors.
+- pandas and NumPy handle tabular data, calculations, and reproducible synthetic data.
+- scikit-learn provides imputers, one-hot encoding, train/test splitting, Tweedie regression, and weighted MAE.
+- Streamlit runs the user interface locally.
 
-- Deterministic analysis code calculates portfolio metrics and produces short findings from those results.
-- A Tweedie regression model can estimate expected incurred losses per unit of exposure from selected rating factors.
-- The app presents the results in an interactive Streamlit interface.
+The app needs no database, API key, or cloud model. Uploaded data is read into the current Python process and is not saved to a project data file by the app.
 
-There is no conversational LLM, external AI API, or autonomous pricing action in this version. The uploaded dataset is processed in the running app process.
+## Workflow
 
-## 3. Technology choices
+1. The user chooses the built-in synthetic portfolio or uploads a CSV.
+2. The interface attempts to identify exposure, premium, claim count, and incurred-loss columns. The user can change the mappings.
+3. Numeric values are coerced for calculations. Invalid values become missing and are treated as zero in the current aggregations; quality warnings report missing/nonnumeric values for mapped premium, claim, and loss fields. Non-positive exposure is excluded from rate calculations.
+4. Portfolio measures are calculated where the required mappings exist.
+5. The user selects a rating factor for segment summaries. Numeric factors with more than 12 distinct values are split into up to five quantile bins. Small segments under 20 records receive a stability warning.
+6. Optionally, a Tweedie model is fit on selected features and evaluated on a holdout sample.
 
-- Python is used for the analysis and application logic.
-- Streamlit provides the browser-based interface and file-upload controls.
-- pandas and NumPy handle tabular data, calculations, and reproducible synthetic examples.
-- scikit-learn provides preprocessing, train/test splitting, and the Tweedie regression baseline.
+Each record should represent one policy or policy period, with exposure in consistent units such as policy-years.
 
-The app can run on a laptop and does not require a database, API key, or cloud service.
+## Measures
 
-## 4. Project files
+- Loss ratio = incurred losses ÷ premium.
+- Claim frequency = claim count ÷ exposure.
+- Claim severity = incurred losses ÷ claim count.
+- Pure premium = incurred losses ÷ exposure.
 
-- **app.py** builds the interface and runs the portfolio workflow.
-- **modeling.py** prepares data, fits the pure-premium model, and calculates holdout metrics.
-- **requirements.txt** lists the Python packages needed to run the app.
-- **sample-insurance-data.csv** is a small fictional file for trying the CSV upload.
-- **README.md** contains setup and usage instructions.
-- **BUILD_NOTES.md** explains the design and implementation in more depth.
+These portfolio ratios are aggregates, not averages of per-policy ratios. A missing or zero denominator produces an unavailable result where guarded in the app.
 
-## 5. Data workflow
+## Synthetic examples
 
-### Choose a source
+The built-in data generator produces 1,200 fictional records with a fixed NumPy random seed (24). The included CSV contains 20 fictional example policies for trying upload, mapping, and summary behavior. It is deliberately too small for the model's 40-record minimum. [sample-results.md](docs/sample-results.md) gives its computed portfolio summary.
 
-The sidebar offers either a built-in synthetic portfolio or a user-supplied CSV. The built-in data generator uses a fixed random seed so its example portfolio is reproducible. The separate sample CSV contains 20 fictional policy records and is useful for trying the upload workflow.
-
-### Map the columns
-
-The interface tries to recognize column names for:
-
-- Earned exposure
-- Earned or written premium
-- Claim count
-- Incurred losses
-
-The user can change each mapping. Exposure is required. Premium, claim count, and incurred losses are optional, but more mapped fields enable more metrics. Other columns can be selected as rating factors.
-
-Each row should represent one policy or policy period. Exposure should be positive and expressed consistently, such as policy-years.
-
-### Standardize numeric values
-
-Mapped numeric columns are converted to numbers for analysis. Values that cannot be converted become missing and are treated as zero for aggregations; the quality review separately reports missing or non-numeric values. Rows with non-positive exposure are excluded from rate calculations and counted in a warning.
-
-### Calculate portfolio metrics
-
-When the relevant columns are available, the app calculates:
-
-- **Loss ratio** = incurred losses ÷ premium
-- **Claim frequency** = claim count ÷ exposure
-- **Claim severity** = incurred losses ÷ claim count
-- **Pure premium** = incurred losses ÷ exposure
-
-Records and total exposure are shown separately because they are different measures.
-
-### Review data quality
-
-The app checks for missing or non-numeric premium, claim count, and incurred-loss values; negative values in those fields; rows with positive losses but zero claims; and rows with invalid exposure. These are initial checks rather than a complete actuarial or source-system validation.
-
-### Compare rating-factor segments
-
-The user chooses one field to compare. Categorical values are summarized as groups. Numeric fields with more than 12 distinct values are divided into up to five quantile bands. The table reports the measures available from the mapped columns, such as exposure, premium, claims, frequency, severity, pure premium, and loss ratio.
-
-The generated review identifies the highest and lowest segment for the most relevant available metric. It also flags segments with fewer than 20 records as potentially less stable. This threshold is a practical warning in the prototype, not a formal credibility standard.
-
-## 6. Baseline pure-premium model
-
-The optional model estimates incurred losses per unit of exposure from selected rating factors.
+## Baseline model
 
 ![Baseline pure-premium modeling pipeline](docs/model-pipeline.svg)
 
-*Figure 2. The baseline model pipeline and its holdout comparison.*
+*Figure 2. The model and holdout evaluation flow.*
 
-1. Rows need positive exposure and non-negative incurred losses. At least 40 valid rows are required.
+1. Rows must have positive exposure and non-negative incurred losses; at least 40 eligible rows are required.
 2. The target is incurred losses divided by exposure.
-3. Rows are split into 75% training and 25% holdout data using a fixed random seed.
-4. Exposure is supplied as a sample weight so a policy with more exposure contributes proportionately to fitting and evaluation.
-5. Numeric predictors have missing values filled with their median. Categorical predictors have missing values filled with their most common value, then are one-hot encoded.
-6. A scikit-learn TweedieRegressor with power 1.5 and a log link is fit on the training set.
-7. Holdout weighted mean absolute error is compared with a simple portfolio-average pure-premium baseline.
+3. Rows are split into 75% training and 25% holdout data using random seed 24.
+4. Exposure is passed as a sample weight during model fitting and weighted evaluation.
+5. Numeric predictors use median imputation. Categorical predictors use most-frequent imputation followed by one-hot encoding.
+6. A scikit-learn TweedieRegressor with power 1.5, log link, alpha 0.1, and at most 1,000 iterations is fit.
+7. Holdout weighted mean absolute error is compared with a weighted portfolio-average target calculated from the training records.
 
-The model is a baseline for exploration. A lower holdout error on one random split does not establish that a model is stable, fair, actuarially adequate, or suitable for production.
+One random split does not establish stability, fairness, actuarial adequacy, or production readiness.
 
-## 7. Running the app
+## Error handling and configuration
 
-Follow the operating-system commands in **README.md**. In brief, create a Python virtual environment, install packages from **requirements.txt**, and start the app with Streamlit. The terminal prints the local browser address.
+The app catches CSV-read errors and model-fitting errors and displays them in the UI. It reports an empty dataset, non-positive exposure, and invalid model input. Dependencies are listed in `requirements.txt`. There are no application environment variables today; `.env.example` records that explicitly.
 
-To explore the sample file, select **Upload a CSV** and choose **sample-insurance-data.csv**. To try the model with enough records, start with the larger built-in synthetic portfolio; the 20-row sample is intentionally small.
+## Privacy and security
 
-## 8. Privacy and data handling
+The app has no outbound model or analytics API calls. A local upload is processed in memory by the app process and is not written into the repository. A hosted deployment would process files on its server, so hosting access controls and retention policies must be reviewed before sensitive data is uploaded. The committed CSV is fictional. Git ignore rules cover environment secrets, virtual environments, caches, and common model artifacts.
 
-The app has no outbound AI or analytics calls. In a local run, the uploaded CSV is read into the running Python process and is not written to a project data file. If the app is later deployed to a hosted server, uploaded data will be processed on that server; deployment and access controls should be reviewed before uploading confidential information.
+## Tests
 
-## 9. Current limitations and next steps
+`tests/test_modeling.py` covers successful model evaluation, filtering of ineligible rows, minimum record validation, and the requirement for positive losses. `tests/test_sample_data.py` checks expected totals from the fictional sample CSV. The GitHub Actions workflow runs these tests on Python 3.11 and 3.12. These tests do not validate every Streamlit interaction or actuarial assumptions.
 
-- The app currently accepts CSV files, not Excel workbooks or direct database connections.
-- It does not account for coverage mix, policy limits, deductibles, inflation trend, expenses, commissions, reinsurance, or state and provincial constraints.
-- The pure-premium model has one train/test split and a simple baseline; it does not provide cross-validation, calibration plots, uncertainty intervals, fairness review, or formal actuarial credibility.
-- Findings are descriptive and should be checked against the source data and domain knowledge.
-- The app does not set or recommend an individual customer's price.
+## Limitations and future improvements
 
-Possible next steps are to add schema diagnostics, repeatable validation, model diagnostics, downloadable reports, more granular segment controls, and an optional natural-language interface over the computed results.
+Current limits include CSV-only upload, basic data checks, one selected segment factor at a time, a single holdout split, and no uncertainty, calibration, fairness, or formal credibility analysis. The prototype also omits coverage mix, limits, deductibles, trend, expenses, reinsurance, and jurisdiction-specific pricing rules.
+
+Useful future steps include stronger schema validation, repeated model validation and diagnostics, downloadable reports, richer segment controls, and a grounded natural-language interface if one is added later.
+
 
