@@ -31,7 +31,7 @@ If PowerShell blocks virtual-environment activation, skip activation and run:
 
 ## Use the agent
 
-1. Choose the synthetic demo portfolio, or upload a CSV.
+1. Choose the synthetic demo portfolio, or upload sample-insurance-data.csv (or your own CSV).
 2. Map the exposure, premium, claim-count, and incurred-loss columns in the sidebar.
 3. Review loss ratio, claim frequency, severity, pure premium, data-quality notes, and segment comparisons.
 4. Optionally choose rating factors and fit the baseline pure-premium model.
