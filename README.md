@@ -6,6 +6,8 @@ PolicyLens is a local Streamlit application for exploring policy-level insurance
 
 ![PolicyLens analysis workflow](docs/agent-workflow.svg)
 
+![PolicyLens running with synthetic demo data](docs/insurance-pricing-agent.jpg)
+
 ## Problem
 
 Insurance data often arrives with different column names and needs basic quality review before analysts can compare experience. PolicyLens lets a user load a CSV, map key insurance fields, review common measures, and inspect experience across a selected rating factor.
@@ -147,7 +149,7 @@ The GitHub Actions workflow runs the same command for pushes and pull requests. 
 
 - Suggested repository description: **Local Streamlit app for insurance portfolio analysis, data-quality review, rating-factor segmentation, and a Tweedie pure-premium baseline.**
 - Suggested topics: `insurance-pricing`, `actuarial-science`, `data-science`, `machine-learning`, `streamlit`, `python`.
-- Add a screenshot or short demo GIF of the running app after capturing it locally. No app screenshot is included yet.
+- The current app screenshot is included at `docs/insurance-pricing-agent.jpg`.
 - Keep the fictional sample and demo instructions prominent so recruiters can reproduce the experience safely.
 
 ## Publish or update with Git
