@@ -1,19 +1,42 @@
-# Insurance Pricing Agent
+# PolicyLens · Insurance Pricing Agent
 
-A local Streamlit MVP for reviewing policy-level insurance pricing data. It profiles a dataset, checks common data-quality problems, calculates core portfolio metrics, compares rating-factor segments, and writes a short pricing review.
+A local Streamlit app for exploring insurance policy data. It checks data quality, calculates portfolio pricing metrics, compares rating-factor segments, and can fit a baseline pure-premium model.
 
-## Run locally
+## Run on Windows
 
-1. Create and activate a Python virtual environment.
-2. Install dependencies with pip install -r requirements.txt.
-3. Start the app with streamlit run app.py.
-4. Use the included synthetic demo data or upload a CSV file.
+Open PowerShell and run:
 
-The demo data is fictional. Uploaded data is processed by the local app process; this version does not send data to an external AI service.
+    git clone https://github.com/SARIKA24KADAM/Insurance-pricing-agent.git
+    cd Insurance-pricing-agent
+    py -m venv .venv
+    .\.venv\Scripts\Activate.ps1
+    python -m pip install -r requirements.txt
+    streamlit run app.py
 
-## Expected data
+Streamlit will print a local URL, usually http://localhost:8501. Open it in your browser.
 
-Each row should represent a policy or policy-period. Map the columns for earned exposure, premium, claim count, and incurred losses. At least an exposure column is needed. For the most complete analysis, include all four measures and one or more rating factors such as territory, vehicle type, or driver age.
+If PowerShell blocks virtual-environment activation, skip activation and run:
 
-The agent reports descriptive portfolio and segment statistics. It does not recommend or set actual customer prices. Validate results with actuarial, regulatory, and business review before using them for pricing decisions.
+    .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+    .\.venv\Scripts\streamlit.exe run app.py
+
+## Run on macOS or Linux
+
+    git clone https://github.com/SARIKA24KADAM/Insurance-pricing-agent.git
+    cd Insurance-pricing-agent
+    python3 -m venv .venv
+    source .venv/bin/activate
+    python -m pip install -r requirements.txt
+    streamlit run app.py
+
+## Use the agent
+
+1. Choose the synthetic demo portfolio, or upload a CSV.
+2. Map the exposure, premium, claim-count, and incurred-loss columns in the sidebar.
+3. Review loss ratio, claim frequency, severity, pure premium, data-quality notes, and segment comparisons.
+4. Optionally choose rating factors and fit the baseline pure-premium model.
+
+Each row should represent a policy or policy period. The demo data is fictional. Uploaded data is analyzed by the local app process and is not sent to an external AI service.
+
+The model uses an exposure-weighted Tweedie regression baseline and reports a holdout comparison with a portfolio-average baseline. This prototype provides exploratory analysis, not an actuarial rate indication or production pricing recommendation. Validate assumptions and results before using them in pricing decisions.
 
