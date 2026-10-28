@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="260" viewBox="0 0 1000 260" role="img" aria-labelledby="title desc">
+  <title id="title">PolicyLens baseline modeling pipeline</title>
+  <desc id="desc">Valid policy records are transformed into loss per exposure; data is split, predictors are imputed and encoded, an exposure-weighted Tweedie regression is fit, then holdout weighted mean absolute error is compared to a portfolio average.</desc>
+  <defs><style>.bg{fill:#f6f8fc}.card{fill:#fff;stroke:#d8e1ee;stroke-width:2}.accent{fill:#2457c5}.title{font:700 16px Arial,sans-serif;fill:#15233b}.copy{font:13px Arial,sans-serif;fill:#53627a}.arrow{stroke:#8294b1;stroke-width:3;fill:none;marker-end:url(#head)}</style><marker id="head" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 Z" fill="#8294b1"/></marker></defs>
+  <rect class="bg" width="1000" height="260" rx="20"/>
+  <g transform="translate(25 62)"><rect class="card" width="165" height="136" rx="14"/><text class="title" x="18" y="42">Valid records</text><text class="copy" x="18" y="72">Positive exposure</text><text class="copy" x="18" y="94">Non-negative losses</text></g><path class="arrow" d="M195 130 H225"/>
+  <g transform="translate(235 62)"><rect class="card" width="165" height="136" rx="14"/><text class="title" x="18" y="42">Build target</text><text class="copy" x="18" y="72">Incurred losses</text><text class="copy" x="18" y="94">÷ exposure</text></g><path class="arrow" d="M405 130 H435"/>
+  <g transform="translate(445 62)"><rect class="card" width="165" height="136" rx="14"/><text class="title" x="18" y="42">Prepare features</text><text class="copy" x="18" y="72">Impute missing values</text><text class="copy" x="18" y="94">Encode categories</text></g><path class="arrow" d="M615 130 H645"/>
+  <g transform="translate(655 62)"><rect class="card" width="165" height="136" rx="14"/><text class="title" x="18" y="42">Fit model</text><text class="copy" x="18" y="72">Tweedie regression</text><text class="copy" x="18" y="94">Exposure sample weights</text></g><path class="arrow" d="M825 130 H855"/>
+  <g transform="translate(865 62)"><rect class="card" width="115" height="136" rx="14"/><text class="title" x="14" y="42">Evaluate</text><text class="copy" x="14" y="72">Holdout</text><text class="copy" x="14" y="94">vs average</text></g>
+</svg>
+
